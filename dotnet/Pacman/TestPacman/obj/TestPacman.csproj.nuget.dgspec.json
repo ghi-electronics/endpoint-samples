@@ -1,0 +1,94 @@
+{
+  "format": 1,
+  "restore": {
+    "F:\\Endpoint\\endpoint-samples\\dotnet\\Pacman\\TestPacman\\TestPacman.csproj": {}
+  },
+  "projects": {
+    "F:\\Endpoint\\endpoint-samples\\dotnet\\Pacman\\TestPacman\\TestPacman.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "F:\\Endpoint\\endpoint-samples\\dotnet\\Pacman\\TestPacman\\TestPacman.csproj",
+        "projectName": "TestPacman",
+        "projectPath": "F:\\Endpoint\\endpoint-samples\\dotnet\\Pacman\\TestPacman\\TestPacman.csproj",
+        "packagesPath": "C:\\Users\\DatTran\\.nuget\\packages\\",
+        "outputPath": "F:\\Endpoint\\endpoint-samples\\dotnet\\Pacman\\TestPacman\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\DatTran\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "F:\\LocalNugets": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "GHIElectronics.Endpoint.Core": {
+              "target": "Package",
+              "version": "[0.1.7-beta, )"
+            },
+            "GHIElectronics.Endpoint.FileSystem": {
+              "target": "Package",
+              "version": "[0.1.7-beta, )"
+            },
+            "Iot.Device.Bindings": {
+              "target": "Package",
+              "version": "[3.2.0, )"
+            },
+            "SkiaSharp.NativeAssets.Linux": {
+              "target": "Package",
+              "version": "[2.88.8, )"
+            },
+            "System.Device.Gpio": {
+              "target": "Package",
+              "version": "[3.2.0, )"
+            },
+            "System.Resources.Extensions": {
+              "target": "Package",
+              "version": "[9.0.0-preview.6.24327.7, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
