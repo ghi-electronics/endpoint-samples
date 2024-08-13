@@ -330,8 +330,29 @@ namespace TestPacman
                     case 1: case 3: dirs[2] = IsGoodDirection(x + 1, y, ghost); dirs[4] = IsGoodDirection(x - 1, y, ghost); break;
                     case 2: case 4: dirs[1] = IsGoodDirection(x, y - 1, ghost); dirs[3] = IsGoodDirection(x, y + 1, ghost); break;
                 }
-                int which = rand.Next(0, 5);
-                if (dirs[which] == true) { directions[ghost] = which; }
+                int tryCnt = 5;
+                while (true)
+                {
+                    int which = rand.Next(0, 5);
+                    if (dirs[which] == true) { 
+                        directions[ghost] = which; 
+                        break;
+                    }
+
+                    tryCnt--;
+
+                    if (tryCnt == 0) 
+                        break;
+                    //else
+                    //{
+                    //    for (int i = 0; i < dirs.Length; i++)
+                    //    {
+                    //        if (!dirs[i]) continue;
+
+                    //        directions[ghost] = i;
+                    //    }
+                    //}
+                }
 
                 //for (int i = 0; i < dirs.Length; i++)
                 //{
