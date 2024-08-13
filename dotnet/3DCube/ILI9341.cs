@@ -1,3 +1,4 @@
+#define BBB
 using System;
 using System.Collections;
 using System.Device.Gpio;
@@ -5,12 +6,15 @@ using System.Device.Gpio.Drivers;
 using System.Device.Spi;
 using System.Text;
 using System.Threading;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
-namespace GHIElectronics.Endpoint.Drivers.HiLetgo.ILI9341 {
-    public class ILI9341 {
-        public enum ILI9341CommandId : byte {
+
+namespace GHIElectronics.Endpoint.Drivers.HiLetgo.ILI9341
+{
+    public class ILI9341
+    {
+        public enum ILI9341CommandId : byte
+        {
             SWRESET = 0x01,
             SLPOUT = 0x11,
             INVOFF = 0x20,
@@ -33,7 +37,8 @@ namespace GHIElectronics.Endpoint.Drivers.HiLetgo.ILI9341 {
             MADCTL_RGB = 0x00
         }
 
-        public class ILI9341Controller {
+        public class ILI9341Controller
+        {
             private readonly byte[] buffer1 = new byte[1];
 
             private readonly SpiDevice spi;
@@ -47,11 +52,22 @@ namespace GHIElectronics.Endpoint.Drivers.HiLetgo.ILI9341 {
             private bool rowColumnSwapped;
 
             const int SPI_BLOCK_SIZE = 4096;
+#if ENDPOINT
+            const int MAX_PIN_PORT = 16;
+#endif
+#if RPI
+            const int MAX_PIN_PORT = 32;
+#endif
+#if BBB
+            const int MAX_PIN_PORT = 32;
+#endif
 
-            public int Width {
+            public int Width
+            {
                 get; private set;
             }
-            public int Height {
+            public int Height
+            {
                 get; private set;
             }
 
@@ -63,53 +79,56 @@ namespace GHIElectronics.Endpoint.Drivers.HiLetgo.ILI9341 {
             public static SpiConnectionSettings GetConnectionSettings(int spi) => new SpiConnectionSettings(spi)
             {
                 Mode = SpiMode.Mode0,
-                ClockFrequency = 12_000_000,               
+                ClockFrequency = 12_000_000,
                 ChipSelectLine = 0
             };
 
 
 
-            public ILI9341Controller(SpiDevice spi, int cs, int control, int reset) {
+            public ILI9341Controller(SpiDevice spi, int cs, int control, int reset)
+            {
                 this.spi = spi;
 
                 this.dePin = control;
-                this.controlGpioController = new GpioController(PinNumberingScheme.Logical, new LibGpiodDriver(this.dePin / 16));
+                this.controlGpioController = new GpioController(PinNumberingScheme.Logical, new LibGpiodDriver(this.dePin / MAX_PIN_PORT));
 
-                this.controlGpioController.OpenPin(this.dePin % 16);
-                this.controlGpioController.SetPinMode(this.dePin % 16, PinMode.Output);
-                this.controlGpioController.Write(this.dePin % 16, PinValue.High);
+                this.controlGpioController.OpenPin(this.dePin % MAX_PIN_PORT);
+                this.controlGpioController.SetPinMode(this.dePin % MAX_PIN_PORT, PinMode.Output);
+                this.controlGpioController.Write(this.dePin % MAX_PIN_PORT, PinValue.High);
 
 
                 this.resetPin = reset;
-                this.resetGpioController = new GpioController(PinNumberingScheme.Logical, new LibGpiodDriver(this.resetPin / 16));
-                this.resetGpioController.OpenPin(this.resetPin % 16);
-                this.resetGpioController.SetPinMode(this.resetPin % 16, PinMode.Output);
-                this.resetGpioController.Write(this.resetPin % 16, PinValue.High);
+                this.resetGpioController = new GpioController(PinNumberingScheme.Logical, new LibGpiodDriver(this.resetPin / MAX_PIN_PORT));
+                this.resetGpioController.OpenPin(this.resetPin % MAX_PIN_PORT);
+                this.resetGpioController.SetPinMode(this.resetPin % MAX_PIN_PORT, PinMode.Output);
+                this.resetGpioController.Write(this.resetPin % MAX_PIN_PORT, PinValue.High);
 
                 this.csPin = cs;
-                this.csGpioController = new GpioController(PinNumberingScheme.Logical, new LibGpiodDriver(this.csPin / 16));
-                this.csGpioController.OpenPin(this.csPin % 16);
-                this.csGpioController.SetPinMode(this.csPin % 16, PinMode.Output);
-                this.csGpioController.Write(this.csPin % 16, PinValue.High);
+                this.csGpioController = new GpioController(PinNumberingScheme.Logical, new LibGpiodDriver(this.csPin / MAX_PIN_PORT));
+                this.csGpioController.OpenPin(this.csPin % MAX_PIN_PORT);
+                this.csGpioController.SetPinMode(this.csPin % MAX_PIN_PORT, PinMode.Output);
+                this.csGpioController.Write(this.csPin % MAX_PIN_PORT, PinValue.High);
 
 
                 this.Reset();
                 this.Initialize();
                 this.SetDataAccessControl(!false, !false, !false, true);
-                this.SetDrawWindow(0, 0, this.MaxWidth-1, this.MaxHeight-1);
+                this.SetDrawWindow(0, 0, this.MaxWidth - 1, this.MaxHeight - 1);
 
                 this.Enable();
             }
 
-            private void Reset() {
-                this.resetGpioController?.Write(this.resetPin % 16, PinValue.Low);
+            private void Reset()
+            {
+                this.resetGpioController?.Write(this.resetPin % MAX_PIN_PORT, PinValue.Low);
                 Thread.Sleep(50);
 
-                this.resetGpioController?.Write(this.resetPin % 16, PinValue.High);
+                this.resetGpioController?.Write(this.resetPin % MAX_PIN_PORT, PinValue.High);
                 Thread.Sleep(200);
             }
 
-            private void Initialize() {
+            private void Initialize()
+            {
                 this.SendCommand(ILI9341CommandId.SWRESET);
                 Thread.Sleep(10);
 
@@ -157,7 +176,8 @@ namespace GHIElectronics.Endpoint.Drivers.HiLetgo.ILI9341 {
                 Thread.Sleep(100);
             }
 
-            public void Dispose() {
+            public void Dispose()
+            {
                 this.spi.Dispose();
                 this.controlGpioController.Dispose();
                 this.resetGpioController?.Dispose();
@@ -166,34 +186,38 @@ namespace GHIElectronics.Endpoint.Drivers.HiLetgo.ILI9341 {
             public void Enable() => this.SendCommand(ILI9341CommandId.DISPON);
             public void Disable() => this.SendCommand(ILI9341CommandId.DISPOFF);
 
-            private void SendCommand(ILI9341CommandId command) {
+            private void SendCommand(ILI9341CommandId command)
+            {
                 this.buffer1[0] = (byte)command;
-                this.controlGpioController.Write(this.dePin % 16, PinValue.Low);
+                this.controlGpioController.Write(this.dePin % MAX_PIN_PORT, PinValue.Low);
 
-                this.csGpioController.Write(this.csPin % 16, PinValue.Low);
+                this.csGpioController.Write(this.csPin % MAX_PIN_PORT, PinValue.Low);
                 this.spi.Write(this.buffer1);
-                this.csGpioController.Write(this.csPin % 16, PinValue.High);
+                this.csGpioController.Write(this.csPin % MAX_PIN_PORT, PinValue.High);
             }
 
-            private void SendData(byte data) {
+            private void SendData(byte data)
+            {
                 this.buffer1[0] = data;
-                this.controlGpioController.Write(this.dePin % 16, PinValue.High);
+                this.controlGpioController.Write(this.dePin % MAX_PIN_PORT, PinValue.High);
 
-                this.csGpioController.Write(this.csPin % 16, PinValue.Low);
+                this.csGpioController.Write(this.csPin % MAX_PIN_PORT, PinValue.Low);
                 this.spi.Write(this.buffer1);
-                this.csGpioController.Write(this.csPin % 16, PinValue.High);
+                this.csGpioController.Write(this.csPin % MAX_PIN_PORT, PinValue.High);
             }
 
-            private void SendData(byte[] data) {
-                this.controlGpioController.Write(this.dePin % 16, PinValue.High);
+            private void SendData(byte[] data)
+            {
+                this.controlGpioController.Write(this.dePin % MAX_PIN_PORT, PinValue.High);
 
-                this.csGpioController.Write(this.csPin % 16, PinValue.Low);
+                this.csGpioController.Write(this.csPin % MAX_PIN_PORT, PinValue.Low);
                 this.spi.Write(data);
-                this.csGpioController.Write(this.csPin % 16, PinValue.High);
+                this.csGpioController.Write(this.csPin % MAX_PIN_PORT, PinValue.High);
             }
 
 
-            public void SetDrawWindow(int x, int y, int width, int height) {
+            public void SetDrawWindow(int x, int y, int width, int height)
+            {
                 var x_end = x + width;
                 var y_end = y + height;
 
@@ -215,7 +239,8 @@ namespace GHIElectronics.Endpoint.Drivers.HiLetgo.ILI9341 {
                 this.Height = height;
             }
 
-            public void SetDataAccessControl(bool swapRowColumn, bool invertRow, bool invertColumn, bool useBgrPanel) {
+            public void SetDataAccessControl(bool swapRowColumn, bool invertRow, bool invertColumn, bool useBgrPanel)
+            {
                 var val = default(byte);
 
                 if (useBgrPanel) val |= 0b0000_1000;
@@ -229,24 +254,26 @@ namespace GHIElectronics.Endpoint.Drivers.HiLetgo.ILI9341 {
                 this.rowColumnSwapped = swapRowColumn;
             }
 
-            private void SendDrawCommand() {
+            private void SendDrawCommand()
+            {
                 this.SendCommand(ILI9341CommandId.RAMWR);
 
-                this.controlGpioController.Write(this.dePin % 16, PinValue.High);
+                this.controlGpioController.Write(this.dePin % MAX_PIN_PORT, PinValue.High);
             }
 
-            public void DrawBuffer(byte[] buffer) {
+            public void DrawBuffer(byte[] buffer, int offset, int length)
+            {
                 this.SendDrawCommand();
 
 
 
-                SwapEndianness(buffer);
+                SwapEndianness(buffer, offset, length);
 
-                var block = buffer.Length / SPI_BLOCK_SIZE;
-                var remain = buffer.Length % SPI_BLOCK_SIZE;
-                var index = 0;
+                var block = length / SPI_BLOCK_SIZE;
+                var remain = length % SPI_BLOCK_SIZE;
+                var index = offset;
 
-                this.csGpioController.Write(this.csPin % 16, PinValue.Low);
+                this.csGpioController.Write(this.csPin % MAX_PIN_PORT, PinValue.Low);
 
                 while (block > 0)
                 {
@@ -256,7 +283,7 @@ namespace GHIElectronics.Endpoint.Drivers.HiLetgo.ILI9341 {
                     index += data.Length;
                     block--;
 
-                    
+
                     this.spi.Write(data);
 
                 }
@@ -267,24 +294,24 @@ namespace GHIElectronics.Endpoint.Drivers.HiLetgo.ILI9341 {
                     Array.Copy(buffer, index, data, 0, data.Length);
                     index += data.Length;
 
-                   
+
                     this.spi.Write(data);
                 }
-                
-                this.csGpioController.Write(this.csPin % 16, PinValue.High);
 
-               
+                this.csGpioController.Write(this.csPin % MAX_PIN_PORT, PinValue.High);
+
+
             }
 
-            
 
-            static void SwapEndianness(byte[] data)
+
+            static void SwapEndianness(byte[] data, int offset, int length)
             {
-                for (int i = 0; i < data.Length; i+=2)
+                for (int i = offset; i < length; i += 2)
                 {
                     var tmp = data[i];
-                    data[i] = data[i+1];
-                    data[i+1] = tmp;
+                    data[i] = data[i + 1];
+                    data[i + 1] = tmp;
                 }
 
             }

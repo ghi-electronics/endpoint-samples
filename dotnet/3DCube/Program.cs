@@ -1,4 +1,6 @@
-﻿#define RPI
+﻿//#define ENDPOINT
+//#define RPI
+#define BBB
 using GHIElectronics.Endpoint.Core;
 
 using GHIElectronics.Endpoint.Drivers.HiLetgo.ILI9341;
@@ -97,6 +99,21 @@ namespace Pacman
         int resetPin = 3;
         int dataControlPin = 4;
         var setting = ILI9341Controller.GetConnectionSettings(0);
+#endif
+#if BBB
+        int csPin = 66;
+        int resetPin = 69;
+        int dataControlPin = 45;
+        var setting = ILI9341Controller.GetConnectionSettings(0);
+
+        //ls -l /dev/spidev*
+        //sudo groupadd spi
+        //sudo adduser debian spi
+        //sudo chgrp spi /dev/spidev0.0
+        //sudo chmod 660 /dev/spidev0.0
+        // config-pin P9.18 spi
+        // config-pin P9.22 spi_sclk
+
 #endif
 
 
@@ -206,7 +223,8 @@ namespace Pacman
                     canvas.DrawText(textBlob, 60, 200, paint2);
                 }
 
-                display.DrawBuffer(bitmap.Copy(SKColorType.Rgb565).Bytes);
+                var dataBitmap = bitmap.Copy(SKColorType.Rgb565).Bytes;
+                display.DrawBuffer(dataBitmap, 0 , dataBitmap.Length);
                 Thread.Sleep(1);
 
                 x += 5 * direction1;
