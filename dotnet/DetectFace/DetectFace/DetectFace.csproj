@@ -8,6 +8,16 @@
 
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>0</WarningLevel>
+    <WarningsAsErrors />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <WarningLevel>0</WarningLevel>
+    <WarningsAsErrors />
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="GHIElectronics.Endpoint.Devices.Display" Version="0.1.4-beta" />
     <PackageReference Include="GHIElectronics.Endpoint.Devices.UsbHost" Version="0.1.4-beta" />
