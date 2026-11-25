@@ -1,0 +1,50 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+publish/
+artifacts/
+
+# Editor and tool state
+.vs/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# NuGet
+*.nupkg
+*.snupkg
+project.lock.json
+*.nuget.props
+*.nuget.targets
+
+# Compiler and debugger byproducts
+*.pdb
+*.ilk
+*.obj
+*.binlog
+*.log
+*.tmp
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Node
+node_modules/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+[Dd]esktop.ini
