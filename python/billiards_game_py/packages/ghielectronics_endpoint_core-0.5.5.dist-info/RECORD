@@ -10,8 +10,8 @@ GHIElectronics/Endpoint/Core/_native.py,sha256=X8AoA-SzkCpKSwmuO9J3S6iy2R9xaUbW-
 GHIElectronics/Endpoint/Core/_pwm_controller.py,sha256=BGdKuk3ciBi_XWlF4--3_MeXd2ExocZIrt1JIx510Ew,1179
 GHIElectronics/Endpoint/Core/_serial_port_controller.py,sha256=Ura1zwUMFU4lfxLnUKaMSkhJDR7MrEvRAyAdeKJK7bQ,993
 GHIElectronics/Endpoint/Core/_spi_controller.py,sha256=4sL0EYplgjkzRmPIWA1KPBLhu8qAK9SjXQbBPaxotlg,1162
-GHIElectronics/Endpoint/Core/libendpoint-arm.so,sha256=CYiEDwwVVCHRNaVAotrTexLJot_9RIoQ43u9M_3D1_Q,1856048
-GHIElectronics/Endpoint/Core/libendpoint-arm64.so,sha256=PxZYWilmbZSnb6avN_SH3K99rUAZIgM6hwGTznPMlqk,2217696
+GHIElectronics/Endpoint/Core/libendpoint-arm.so,sha256=eIUPaouMnwhznXx4oHK8wJ-WF7a5PMp8heGjksTsH20,1867544
+GHIElectronics/Endpoint/Core/libendpoint-arm64.so,sha256=ll8i1rnEe3lXgWeF_BhMFx8QVcOz81uKO_KMgTR1z4s,2232272
 ghielectronics_endpoint_core-0.5.5.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
 ghielectronics_endpoint_core-0.5.5.dist-info/METADATA,sha256=_jAkHZlQwDCPklVMlD_GASg0MHj1S1KwgU4YEpSseIo,1084
 ghielectronics_endpoint_core-0.5.5.dist-info/RECORD,,

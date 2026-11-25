@@ -1,8 +1,8 @@
 GHIElectronics/Endpoint/Pins/__init__.py,sha256=awjW8QoBneccoCqid4Ft6kU1p-qoumcxY9wkFfJLf4U,6135
 GHIElectronics/Endpoint/Pins/_epdomino24.py,sha256=oGIWIohjH5w1O9-MBSwWI7iU9aFDmZfjdYgAYK347tk,8319
 GHIElectronics/Endpoint/Pins/_epm815.py,sha256=_a-AiPnmeP2hRCGbPLR0A0378nGldKRFvQsUASRgKNg,13979
-GHIElectronics/Endpoint/Pins/_epn128.py,sha256=FStyVj9mPwp4qe3gQQvEshVWjK00abWIv07ZzKFI7Kc,21236
-GHIElectronics/Endpoint/Pins/_epn256.py,sha256=NfiMcyDj4t8eSHl_lR0CEqxqZlutc050T1HJmEh0TC4,29888
+GHIElectronics/Endpoint/Pins/_epn128.py,sha256=Ien8DHmiKuwiqVG1CbNQVfbQy89ErNd5QZ77HRNugJ4,19066
+GHIElectronics/Endpoint/Pins/_epn256.py,sha256=YRVU2sstAKQPJraWm0qTkTCSZgZsYTSdCl__zKFwjWA,29017
 ghielectronics_endpoint_pins-0.5.5.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
 ghielectronics_endpoint_pins-0.5.5.dist-info/METADATA,sha256=uI9x4ppXQLc1oKv13SDKzc-l4c1N3h8lhNbATCL6fHA,1519
 ghielectronics_endpoint_pins-0.5.5.dist-info/RECORD,,
