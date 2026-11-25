@@ -1,0 +1,20 @@
+Metadata-Version: 2.4
+Name: GHIElectronics.Endpoint.Drawing
+Version: 0.5.5
+Summary: Off-screen 2D drawing primitives for Endpoint: Canvas, Color, Font, Image, PixelFormat. Pure pixel drawing independent of the LVGL-backed UI widget library. Hand the Canvas buffer to any display, SPI/I2C device, or file.
+Author-email: "GHI Electronics, LLC" <support@ghielectronics.com>
+License-Expression: MIT
+Project-URL: Homepage, https://www.ghielectronics.com/
+Project-URL: Repository, https://github.com/ghi-electronics/Endpoint-Libraries
+Project-URL: Issues, https://github.com/ghi-electronics/Endpoint-Libraries/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: POSIX :: Linux
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: GHIElectronics.Endpoint.Core<0.6,>=0.5.5
+
+# GHIElectronics.Endpoint.Drawing
+
+Off-screen 2D drawing primitives for Endpoint: Canvas, Color, Font, Image, PixelFormat. Pure pixel drawing independent of the LVGL-backed UI widget library. Hand the Canvas buffer to any display, SPI/I2C device, or file.
+
+Part of the [GHI Electronics Endpoint](https://github.com/ghi-electronics/Endpoint-Libraries) libraries. See the repository README for the full package list and getting-started guide.

@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <!-- The .NET version in the Endpoint firmware -->
+    <TargetFramework>net11.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- No RuntimeIdentifier: `dotnet build` keeps the Pins nupkg's full
+         runtimes/ folder (linux-arm + linux-arm64 native libendpoint.so) in
+         the output. `endpoint-cli deploy` auto-detects the connected board's
+         architecture and uploads only the matching native lib, so the same
+         build runs on EPM815 (linux-arm), EPN256 and EPN128 (linux-arm64)
+         without changing this file. -->
+    <!-- Lets .NET's LibraryImport source generator emit the unsafe marshaller
+         code it produces for P/Invokes (ioctl, mmap, ...). Harmless when the
+         program has no P/Invokes; keeps the first F5 working for programs
+         that do. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The single Pins package covers every Endpoint board (EPM815,
+         EPDomino24, EPN256, EPN128). The matching board registers itself
+         with Core at startup via ChipDetect, so one PackageReference works
+         on any of them. -->
+    <PackageReference Include="GHIElectronics.Endpoint.Pins" Version="0.5.5-preview" />
+    <PackageReference Include="GHIElectronics.Endpoint.Devices.Display" Version="0.5.5-preview" />
+    <PackageReference Include="GHIElectronics.Endpoint.Devices.Touch" Version="0.5.5-preview" />
+    <PackageReference Include="GHIElectronics.Endpoint.Drawing" Version="0.5.5-preview" />
+    <PackageReference Include="GHIElectronics.Endpoint.UI" Version="0.5.5-preview" />
+  </ItemGroup>
+
+  <!-- Data files shipped with the program. F5 copies the output folder to the
+       board, so the app reads them at runtime from AppContext.BaseDirectory. -->
+  <ItemGroup>
+    <Content Include="Resources\**\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

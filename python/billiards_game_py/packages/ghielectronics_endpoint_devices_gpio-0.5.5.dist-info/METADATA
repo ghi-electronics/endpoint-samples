@@ -1,0 +1,20 @@
+Metadata-Version: 2.4
+Name: GHIElectronics.Endpoint.Devices.Gpio
+Version: 0.5.5
+Summary: GPIO for GHI Electronics Endpoint, with the API of .NET's System.Device.Gpio.
+Author-email: "GHI Electronics, LLC" <support@ghielectronics.com>
+License-Expression: MIT
+Project-URL: Homepage, https://www.ghielectronics.com/
+Project-URL: Repository, https://github.com/ghi-electronics/Endpoint-Libraries
+Project-URL: Issues, https://github.com/ghi-electronics/Endpoint-Libraries/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: POSIX :: Linux
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: GHIElectronics.Endpoint.Core<0.6,>=0.5.5
+
+# GHIElectronics.Endpoint.Devices.Gpio
+
+GPIO for GHI Electronics Endpoint, with the API of .NET's System.Device.Gpio.
+
+Part of the [GHI Electronics Endpoint](https://github.com/ghi-electronics/Endpoint-Libraries) libraries. See the repository README for the full package list and getting-started guide.

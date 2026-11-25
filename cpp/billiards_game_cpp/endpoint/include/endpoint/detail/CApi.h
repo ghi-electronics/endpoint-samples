@@ -1,0 +1,562 @@
+// libendpoint's hidden C layer, called by the classes in endpoint.h.
+// Programs use those classes, not these functions. Every function returns
+// 0, or the kind of error (see Core.h); endpoint_last_error() gives its message.
+#pragma once
+
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+const char* endpoint_last_error(void);
+const char* endpoint_version(void);
+
+// GPIO
+typedef void (*endpoint_gpio_callback)(void* context, int pin, int changeType);
+int endpoint_gpio_create(void** controller);
+int endpoint_gpio_dispose(void* controller);
+int endpoint_gpio_pin_count(void* controller, int* count);
+int endpoint_gpio_open_pin(void* controller, int pin, int mode, int initialValue);
+int endpoint_gpio_close_pin(void* controller, int pin);
+int endpoint_gpio_is_pin_open(void* controller, int pin, int* open);
+int endpoint_gpio_set_pin_mode(void* controller, int pin, int mode, int initialValue);
+int endpoint_gpio_get_pin_mode(void* controller, int pin, int* mode);
+int endpoint_gpio_is_pin_mode_supported(void* controller, int pin, int mode, int* supported);
+int endpoint_gpio_read(void* controller, int pin, int* value);
+int endpoint_gpio_write(void* controller, int pin, int value);
+int endpoint_gpio_wait_for_event(void* controller, int pin, int eventTypes, int timeoutMs, int* happened, int* timedOut);
+int endpoint_gpio_add_callback(void* controller, int pin, int eventTypes, endpoint_gpio_callback callback, void* context,
+                               int* id);
+int endpoint_gpio_remove_callback(void* controller, int id);
+
+// EPM815 setup
+int endpoint_i2c_initialize(int bus, int frequency);
+int endpoint_i2c_uninitialize(int bus);
+int endpoint_i2c_get_frequency(int bus, int* frequency);
+int endpoint_spi_initialize(int bus, int bufferSize);
+int endpoint_spi_uninitialize(int bus);
+int endpoint_pwm_initialize(int pin);
+int endpoint_pwm_uninitialize(int pin);
+int endpoint_pwm_get_chip_id(int pin, int* chip);
+int endpoint_pwm_get_channel_id(int pin, int* channel);
+int endpoint_serialport_initialize(const char* portName, int enableHardwareFlowControl);
+int endpoint_serialport_uninitialize(const char* portName);
+int endpoint_can_initialize(const char* port, int bitrate);
+int endpoint_can_uninitialize(const char* port);
+
+// I2C, SPI, PWM devices
+int endpoint_i2cdevice_create(int busId, int deviceAddress, void** device);
+int endpoint_i2cdevice_dispose(void* device);
+int endpoint_i2cdevice_read(void* device, uint8_t* buffer, int length);
+int endpoint_i2cdevice_write(void* device, const uint8_t* buffer, int length);
+int endpoint_i2cdevice_write_read(void* device, const uint8_t* write, int writeLength, uint8_t* read, int readLength);
+int endpoint_spidevice_create(int busId, int chipSelectLine, int mode, int dataBitLength, int clockFrequency, int dataFlow,
+                              int chipSelectActiveHigh, void** device);
+int endpoint_spidevice_dispose(void* device);
+int endpoint_spidevice_transfer(void* device, const uint8_t* write, uint8_t* read, int length);
+int endpoint_pwmchannel_create(int chip, int channel, int frequency, double dutyCycle, void** pwm);
+int endpoint_pwmchannel_dispose(void* pwm);
+int endpoint_pwmchannel_get_frequency(void* pwm, int* frequency);
+int endpoint_pwmchannel_set_frequency(void* pwm, int frequency);
+int endpoint_pwmchannel_get_duty_cycle(void* pwm, double* dutyCycle);
+int endpoint_pwmchannel_set_duty_cycle(void* pwm, double dutyCycle);
+int endpoint_pwmchannel_start(void* pwm);
+int endpoint_pwmchannel_stop(void* pwm);
+
+// ADC, DAC, watchdog, RTC
+int endpoint_adc_pin_count(int* count);
+int endpoint_adc_supports_analog_input(int pin, int* supported);
+int endpoint_adc_convert_pin_to_channel(int pin, int* channel);
+int endpoint_adc_voltage_reference(double* millivolts);
+int endpoint_adc_open_pin(int pin, void** input);
+int endpoint_adc_close_pin(void* input);
+int endpoint_adc_resolution_bits(void* input, int* bits);
+int endpoint_adc_read_raw(void* input, uint32_t* value);
+int endpoint_adc_read_millivolts(void* input, double* millivolts);
+int endpoint_dac_open_channel(int channel, void** output);
+int endpoint_dac_close_channel(void* output);
+int endpoint_dac_write_value(void* output, int value);
+int endpoint_dac_last_written_value(void* output, int* value);
+int endpoint_watchdog_create(void** watchdog);
+int endpoint_watchdog_dispose(void* watchdog);
+int endpoint_watchdog_max_timeout(int* milliseconds);
+int endpoint_watchdog_is_enabled(void* watchdog, int* enabled);
+int endpoint_watchdog_enable(void* watchdog, int timeoutMs);
+int endpoint_watchdog_reset(void* watchdog);
+int endpoint_watchdog_disable(void* watchdog);
+int endpoint_rtc_read_time(int64_t* secondsUtc);
+int endpoint_rtc_set_time(int64_t secondsUtc);
+int endpoint_rtc_is_valid(int* valid);
+int endpoint_rtc_set_charge_mode(int chargeMode);
+int endpoint_rtc_not_implemented(void);
+
+// Serial port and CAN (C++ only)
+int endpoint_serial_open(const char* portName, int baudRate, int parity, int dataBits, int stopBits, int handshake,
+                         void** port);
+int endpoint_serial_close(void* port);
+int endpoint_serial_set_baud_rate(void* port, int baudRate);
+int endpoint_serial_read(void* port, uint8_t* buffer, int count, int timeoutMs, int* read);
+int endpoint_serial_write(void* port, const uint8_t* buffer, int count, int timeoutMs);
+int endpoint_serial_bytes_to_read(void* port, int* count);
+int endpoint_serial_discard_in(void* port);
+int endpoint_serial_discard_out(void* port);
+int endpoint_canraw_open(const char* networkInterface, void** can);
+int endpoint_canraw_close(void* can);
+int endpoint_canraw_write_frame(void* can, uint32_t id, const uint8_t* data, int length);
+int endpoint_canraw_read_frame(void* can, uint32_t* id, uint8_t* data, int capacity, int* length, int* ok);
+int endpoint_canraw_filter(void* can, uint32_t id);
+
+// SD cards and USB drives
+typedef void (*endpoint_storage_callback)(void* context, intptr_t hdc, int status, const char* volumeLabel);
+int endpoint_storage_create(const char* name, endpoint_storage_callback callback, void* context, void** controller);
+int endpoint_storage_dispose(void* controller);
+int endpoint_storage_enable(void* controller);
+int endpoint_storage_disable(void* controller);
+int endpoint_storage_mount(intptr_t hdc, char* name, int nameSize);
+int endpoint_storage_flush(intptr_t hdc);
+int endpoint_storage_unmount(intptr_t hdc);
+int endpoint_driveinfo_get(const char* path, char* format, int formatSize, int* driveType, int* isReady,
+                           int64_t* totalSize, int64_t* totalFreeSpace, int64_t* availableFreeSpace);
+
+// USB host: devices connected and disconnected
+typedef void (*endpoint_usbhost_callback)(void* context, int status, uint32_t id, int type, int vendorId,
+                                          int productId, const char* deviceName, const char* manufacturer,
+                                          const char* product, const char* serialNumber);
+int endpoint_usbhost_create(endpoint_usbhost_callback callback, void* context, void** controller);
+int endpoint_usbhost_dispose(void* controller);
+int endpoint_usbhost_enable(void* controller);
+int endpoint_usbhost_disable(void* controller);
+
+// USB keyboards, mice and joysticks
+typedef void (*endpoint_input_callback)(void* context, int event, int a, int b, int c, int d, int e);
+int endpoint_input_open(const char* deviceName, int type, endpoint_input_callback callback, void* context,
+                        void** device);
+int endpoint_input_close(void* device);
+int endpoint_input_info(void* device, int* vendorId, int* productId, int* connected, int* capabilities);
+int endpoint_input_key_state(void* device, int key, int* state);
+int endpoint_input_mouse_state(void* device, int* x, int* y, int* wheel, int* buttons);
+int endpoint_input_joystick_state(void* device, int cursor, int* x, int* y, int* hat, uint32_t* buttons);
+int endpoint_input_set_cursor_bounds(void* device, int cursor, int minX, int maxX, int minY, int maxY);
+int endpoint_input_set_cursor_position(void* device, int x, int y);
+int endpoint_input_set_scale(void* device, double scale);
+
+// A program's own USB devices (for .NET's RawDevice and HidDevice)
+typedef void (*endpoint_unplugged_callback)(void* context);
+int endpoint_usbraw_open(const char* deviceName, endpoint_unplugged_callback callback, void* context, void** device);
+int endpoint_usbraw_close(void* device);
+int endpoint_usbraw_info(void* device, int* vendorId, int* productId, int* connected);
+int endpoint_usbraw_control(void* device, int requestType, int request, int value, int index, uint8_t* data,
+                            int length, int timeoutMs, int* transferred);
+int endpoint_usbraw_transfer(void* device, int endpoint, uint8_t* data, int length, int timeoutMs, int* transferred);
+int endpoint_hid_open(const char* deviceName, endpoint_unplugged_callback callback, void* context, void** device);
+int endpoint_hid_close(void* device);
+int endpoint_hid_info(void* device, int* vendorId, int* productId, int* connected, char* name, int nameSize);
+int endpoint_hid_report_descriptor(void* device, uint8_t* buffer, int size, int* length);
+int endpoint_hid_write(void* device, const uint8_t* data, int length, int* written);
+int endpoint_hid_read(void* device, uint8_t* buffer, int size, int timeoutMs, int* length);
+int endpoint_hid_get_feature(void* device, uint8_t* buffer, int size, int* length);
+int endpoint_hid_send_feature(void* device, const uint8_t* data, int length);
+int endpoint_printer_open(const char* deviceName, endpoint_unplugged_callback callback, void* context, void** device);
+int endpoint_printer_close(void* device);
+int endpoint_printer_info(void* device, int* vendorId, int* productId, int* connected);
+int endpoint_printer_device_id(void* device, char* text, int size);
+int endpoint_printer_status(void* device, int* status);
+int endpoint_printer_write(void* device, const uint8_t* data, int length, int timeoutMs, int* written);
+int endpoint_printer_read(void* device, uint8_t* buffer, int size, int timeoutMs, int* length);
+
+// Sound (SoundDevice) and MP3
+int endpoint_sound_create(const char* playback, const char* recording, const char* mixer, int sampleRate, int channels,
+                          int bitsPerSample, int unmute, void** device);
+int endpoint_sound_dispose(void* device);
+int endpoint_sound_play_file(void* device, const char* path, int mp3);
+int endpoint_sound_play_buffer(void* device, const uint8_t* data, int length, int mp3);
+int endpoint_sound_record_file(void* device, int seconds, const char* path);
+int endpoint_sound_record_buffer(void* device, int seconds, uint8_t* buffer, int size, int* length);
+int endpoint_sound_start_recording(void* device, const char* path);
+int endpoint_sound_stop_recording(void* device);
+int endpoint_sound_get_volume(void* device, int capture, int64_t* volume);
+int endpoint_sound_set_volume(void* device, int capture, int64_t volume);
+int endpoint_sound_get_mute(void* device, int capture, int* mute);
+int endpoint_sound_set_mute(void* device, int capture, int mute);
+int endpoint_mp3_open(const char* path, const uint8_t* data, int length, void** decoder, int* sampleRate, int* channels,
+                      int64_t* samples);
+int endpoint_mp3_read(void* decoder, int16_t* samples, int count, int* got);
+int endpoint_mp3_close(void* decoder);
+
+// Webcams (Camera)
+typedef void (*endpoint_camera_frame_callback)(void* context, const uint8_t* jpeg, int length, int width, int height);
+int endpoint_camera_open(const char* deviceName, endpoint_camera_frame_callback frame, endpoint_unplugged_callback unplugged,
+                         void* context, void** camera);
+int endpoint_camera_close(void* camera);
+int endpoint_camera_info(void* camera, char* name, int nameSize, int* connected, int* formats);
+int endpoint_camera_format(void* camera, int index, int* width, int* height, int* pixelFormat, int* maxFrameRate);
+int endpoint_camera_get_resolution(void* camera, int* width, int* height, int* pixelFormat, int* frameRate);
+int endpoint_camera_set_resolution(void* camera, int width, int height, int frameRate, int pixelFormat);
+int endpoint_camera_get_quality(void* camera, int* quality);
+int endpoint_camera_set_quality(void* camera, int quality);
+int endpoint_camera_capture(void* camera, int timeoutMs, uint8_t** jpeg, int* length);
+int endpoint_camera_free(uint8_t* jpeg);
+int endpoint_camera_start_streaming(void* camera);
+int endpoint_camera_stop_streaming(void* camera);
+int endpoint_camera_get_control(void* camera, int control, int* supported, int* minimum, int* maximum, int* step,
+                                int* defaultValue, int* value);
+int endpoint_camera_set_control(void* camera, int control, int value);
+
+// Network: translates a type (0=Ethernet, 1=WiFi) into the system
+// identifier for its interface ("eth0", "wlan0", ...).
+// Fills outBuf with an empty string if no interface of that type is
+// currently present. Enable reads /config/network.json fresh every time
+// and applies synchronously in the caller's process.
+int endpoint_network_get_interface_name(int type, char* outBuf, int outSize);
+int endpoint_network_enable(int type);
+int endpoint_network_disable(int type);
+int endpoint_network_is_enabled(int type, int* result);
+int endpoint_network_is_connected(int type, int* result);
+
+// Persistent interface settings carried across the C boundary as a POD
+// struct. Empty strings mean "not set" (null in JSON). WiFi-only fields
+// (ssid/password/security) are ignored for non-WiFi types. The C++ and
+// Python wrappers marshal this into their typed Settings classes.
+#define ENDPOINT_NETWORK_MAX_DNS 8
+#define ENDPOINT_NETWORK_IP_SIZE 64
+#define ENDPOINT_NETWORK_MAC_SIZE 32
+#define ENDPOINT_NETWORK_SSID_SIZE 64
+#define ENDPOINT_NETWORK_PASSWORD_SIZE 128
+
+typedef struct {
+    int is_dhcp_enabled;
+    char address[ENDPOINT_NETWORK_IP_SIZE];
+    char subnet_mask[ENDPOINT_NETWORK_IP_SIZE];
+    char gateway[ENDPOINT_NETWORK_IP_SIZE];
+    char dns[ENDPOINT_NETWORK_MAX_DNS][ENDPOINT_NETWORK_IP_SIZE];
+    int dns_count;
+    char mac[ENDPOINT_NETWORK_MAC_SIZE];
+    // WiFi only; ignored for other types.
+    char ssid[ENDPOINT_NETWORK_SSID_SIZE];
+    char password[ENDPOINT_NETWORK_PASSWORD_SIZE];
+    int security;  // 0=None, 1=Wpa, 2=Wpa2, 3=Wpa3
+} endpoint_network_settings_t;
+
+int endpoint_network_get_interface_settings(int type, endpoint_network_settings_t* out);
+int endpoint_network_set_interface_settings(int type, const endpoint_network_settings_t* in);
+
+// Display: the built-in Parallel panel connected to the SoC's LCD controller.
+// Programs talk to it through the DisplayController abstract class in each
+// language; this C layer only drives the one concrete transport (parallel
+// RGB panel via /dev/fb0). SPI/I2C panels are the customer's own code - they
+// subclass DisplayController and own the chip-specific init / pixel path.
+//
+// Enable reads /config/display.json, loads the panel driver (panel-simple)
+// and raises the backlight. Disable lowers backlight and unloads.
+// IsConnected is true when a /dev/fbN exists.
+int endpoint_display_enable(void);
+int endpoint_display_disable(void);
+int endpoint_display_is_enabled(int* result);
+
+#define ENDPOINT_DISPLAY_LOGO_SIZE 128
+#define ENDPOINT_DISPLAY_NAME_SIZE 32
+
+typedef struct {
+    int enable_at_boot;
+    int type;  // 0=None, 1=Parallel. Custom panels use None here and
+               // instantiate their own DisplayController subclass.
+
+    // Backlight (nullable: has_backlight=0 means "no backlight is controlled
+    // by the display controller - either there is no backlight or the user's
+    // own code drives it"). backlight_pin is the chip-neutral packed pin
+    // (port * 16 + line); backlight_chip + backlight_line are what the C++
+    // DisplayController writes into the JSON for the native ApplyBacklight.
+    int has_backlight;
+    int backlight_pin;
+    int backlight_chip;
+    int backlight_line;
+    int backlight_active_polarity;  // 0=ActiveHigh (ON when GPIO is high),
+                                    // 1=ActiveLow (ON when GPIO is low).
+
+    // Logo filename on the config partition (empty = none).
+    char logo[ENDPOINT_DISPLAY_LOGO_SIZE];
+
+    // Parallel (RGB parallel panel; honored when type == 1).
+    int parallel_width;
+    int parallel_height;
+    int parallel_pixel_clock_hz;
+    int parallel_h_front_porch;
+    int parallel_h_back_porch;
+    int parallel_h_sync;
+    int parallel_v_front_porch;
+    int parallel_v_back_porch;
+    int parallel_v_sync;
+    int parallel_bits_per_pixel;
+    // DE (Data Enable) polarity:
+    //   0 = ActiveHigh (DE high while valid pixel data is on the bus)
+    //   1 = ActiveLow  (DE low while valid pixel data is on the bus)
+    int parallel_de_polarity;
+    // Edge of the pixel clock on which the panel latches data:
+    //   0 = Rising  (default; the SoC drives data on the falling edge, panel
+    //                samples on the rising edge)
+    //   1 = Falling (inverted; SoC drives on rising, panel samples on falling)
+    int parallel_pixel_clock_edge;
+} endpoint_display_settings_t;
+
+int endpoint_display_get_settings(endpoint_display_settings_t* out);
+int endpoint_display_set_settings(const endpoint_display_settings_t* in);
+
+// Touchscreens (built-in via display.json or USB via UsbHostController).
+// The callback runs on the device's own thread:
+//   (context, eventType 0=Pressed/1=Released/2=Moved, pointCount, ids[], xs[], ys[])
+// id arrays are valid for the duration of the callback only.
+typedef void (*endpoint_touch_callback)(void* context, int eventType, int pointCount,
+                                        const int* ids, const int* xs, const int* ys);
+int endpoint_touch_find_default(char* outBuf, int outSize);
+int endpoint_touch_open(const char* deviceName, endpoint_touch_callback callback,
+                        void* context, void** device);
+int endpoint_touch_close(void* device);
+int endpoint_touch_info(void* device, int* vendorId, int* productId, int* connected,
+                        int* width, int* height);
+
+// ---- UI (LVGL under the hood) ----
+// Lifecycle. Initialize once after the display is enabled; Run blocks until
+// Stop is called (safe from a signal handler).
+int endpoint_ui_initialize(void);
+int endpoint_ui_run(void);
+int endpoint_ui_stop(void);
+
+// Touch input bridge. Call touch_attach once after Initialize to register
+// an LVGL pointer input device. Then call touch_feed(x, y, pressed) from
+// your touch chip's event handler — LVGL's event loop will pick it up on
+// the next tick and dispatch Clicked / ValueChanged accordingly.
+int endpoint_ui_touch_attach(void);
+int endpoint_ui_touch_feed(int x, int y, int pressed);
+
+// UI timer. Call Create after Initialize; the callback fires every period_ms
+// milliseconds from inside endpoint_ui_run's LVGL pump, so widget calls in it
+// are safe (LVGL is LV_USE_OS=LV_OS_NONE, so background threads must NOT call
+// LVGL directly). Returns an opaque handle in *out_timer; pass it to Delete
+// to cancel. Create / SetPeriod / Delete are safe from any thread.
+int endpoint_ui_timer_create(uint32_t period_ms, void (*cb)(void* context),
+                             void* context, void** out_timer);
+int endpoint_ui_timer_set_period(void* timer, uint32_t period_ms);
+int endpoint_ui_timer_delete(void* timer);
+
+// Common widget operations. `widget` is a handle returned by one of the
+// *_create functions (internally an lv_obj_t*). Destroy frees the widget
+// and all its children.
+int endpoint_ui_widget_destroy(void* widget);
+int endpoint_ui_widget_set_pos(void* widget, int x, int y);
+int endpoint_ui_widget_set_x(void* widget, int x);
+int endpoint_ui_widget_set_y(void* widget, int y);
+int endpoint_ui_widget_get_pos(void* widget, int* x, int* y);
+int endpoint_ui_widget_set_size(void* widget, int width, int height);
+int endpoint_ui_widget_set_width(void* widget, int width);
+int endpoint_ui_widget_set_height(void* widget, int height);
+int endpoint_ui_widget_get_size(void* widget, int* width, int* height);
+int endpoint_ui_widget_set_visible(void* widget, int visible);
+int endpoint_ui_widget_get_visible(void* widget, int* visible);
+int endpoint_ui_widget_set_bg_color(void* widget, uint32_t rgb);
+int endpoint_ui_widget_set_bg_gradient(void* widget, uint32_t rgb_start, uint32_t rgb_end, int direction);
+int endpoint_ui_widget_set_bg_image(void* widget, const uint8_t* data, int data_len, int width, int height);
+
+// Event subscription. The callback runs on the UI thread (the one calling
+// endpoint_ui_run). `context` is passed back untouched. Not currently
+// unsubscribeable; subscriptions live until the widget is destroyed.
+typedef void (*endpoint_ui_event_callback)(void* context);
+int endpoint_ui_subscribe_clicked(void* widget, endpoint_ui_event_callback cb, void* context);
+int endpoint_ui_subscribe_value_changed(void* widget, endpoint_ui_event_callback cb, void* context);
+
+// Screen: a top-level container with no parent. Multiple screens can exist;
+// only one is active at a time (endpoint_ui_screen_load makes it active).
+int endpoint_ui_screen_create(void** out);
+int endpoint_ui_screen_load(void* screen);
+int endpoint_ui_screen_active(void** out);
+
+// Container: groups children; positions them relative to itself.
+int endpoint_ui_container_create(void* parent, void** out);
+
+// Border: like Container, but exposes WPF-style border + background styling.
+int endpoint_ui_border_create(void* parent, void** out);
+int endpoint_ui_border_set_thickness(void* border, int px);
+int endpoint_ui_border_set_brush(void* border, uint32_t rgb);
+int endpoint_ui_border_set_corner_radius(void* border, int px);
+int endpoint_ui_border_set_padding(void* border, int px);
+
+// StackPanel: flex layout that stacks children. orientation 0 = Vertical, 1 = Horizontal.
+int endpoint_ui_stackpanel_create(void* parent, void** out);
+int endpoint_ui_stackpanel_set_orientation(void* panel, int orientation);
+int endpoint_ui_stackpanel_set_spacing(void* panel, int px);
+
+// WPF-style per-widget Margin (works in any parent).
+int endpoint_ui_widget_set_margin(void* widget, int left, int top, int right, int bottom);
+
+// Grid: WPF-style layout with ColumnDefinitions + RowDefinitions. Sizes are
+// positive (fixed px) or negative (star — "-1" = "*", "-2" = "2*").
+int endpoint_ui_grid_create(void* parent, void** out);
+int endpoint_ui_grid_set_definitions(void* panel, const int* cols, int col_count, const int* rows, int row_count);
+int endpoint_ui_grid_set_cell(void* child, int column, int column_span, int row, int row_span);
+
+// DockPanel: a plain container; the three-language DockPanel wrapper
+// computes positions from each child's Dock side and sets them.
+int endpoint_ui_dockpanel_create(void* parent, void** out);
+
+// Menu + MenuItem: horizontal strip of buttons / dropdowns.
+int endpoint_ui_menu_create(void* parent, void** out);
+int endpoint_ui_menu_set_background(void* menu, uint32_t rgb);
+int endpoint_ui_menuitem_create(void* parent, const char* header, int item_width, void** out);
+int endpoint_ui_menuitem_create_dropdown(void* parent, const char* header,
+                                         const char* newline_joined_subitems,
+                                         int item_width, void** out);
+
+// Calendar.
+int endpoint_ui_calendar_create(void* parent, void** out);
+int endpoint_ui_calendar_set_showed_date(void* cal, int year, int month);
+int endpoint_ui_calendar_set_today(void* cal, int year, int month, int day);
+
+// DataGrid (table).
+int endpoint_ui_datagrid_create(void* parent, void** out);
+int endpoint_ui_datagrid_set_size(void* grid, int cols, int rows);
+int endpoint_ui_datagrid_set_cell(void* grid, int row, int col, const char* text);
+int endpoint_ui_datagrid_set_column_width(void* grid, int col, int px);
+
+// TreeView — a vertical list of indented nodes.
+int endpoint_ui_treeview_create(void* parent, void** out);
+int endpoint_ui_treeview_add_node(void* tree, int depth, int is_expanded,
+                                  int has_children, const char* header, void** out_node);
+int endpoint_ui_treeview_clear(void* tree);
+
+// Chart (lv_chart).
+int endpoint_ui_chart_create(void* parent, void** out);
+int endpoint_ui_chart_set_mode(void* chart, int mode);
+int endpoint_ui_chart_set_colors(void* chart, uint32_t point_color,
+                                 uint32_t area_color, uint32_t label_color);
+int endpoint_ui_chart_set_division(void* chart, int y_divisions);
+int endpoint_ui_chart_set_points(void* chart, const int* values, int count);
+
+// Gauge (lv_scale + needle line).
+int endpoint_ui_gauge_create(void* parent, int width, int height, void** out);
+int endpoint_ui_gauge_set_range(void* gauge, int min, int max);
+int endpoint_ui_gauge_set_value(void* gauge, int value);
+int endpoint_ui_gauge_set_sweep(void* gauge, int sweep_angle);
+int endpoint_ui_gauge_set_needle_shape(void* gauge, int center_y_1000, int length_1000);
+int endpoint_ui_gauge_show_scale(void* gauge, int visible);
+
+// Button: Clicked event via endpoint_ui_subscribe_clicked.
+int endpoint_ui_button_create(void* parent, void** out);
+int endpoint_ui_button_set_text(void* button, const char* text);
+int endpoint_ui_button_set_bg_color(void* button, uint32_t rgb);
+int endpoint_ui_button_set_text_color(void* button, uint32_t rgb);
+int endpoint_ui_button_set_font_size(void* button, int size);
+
+// Label.
+int endpoint_ui_label_create(void* parent, void** out);
+int endpoint_ui_label_set_text(void* label, const char* text);
+int endpoint_ui_label_set_color(void* label, uint32_t rgb);
+int endpoint_ui_label_set_font_size(void* label, int size);
+int endpoint_ui_label_set_text_align(void* label, int align);
+
+// Image: raw RGB565 pixels (little-endian). The caller keeps the pixel
+// buffer alive for the lifetime of the widget; libendpoint does not copy.
+int endpoint_ui_image_create(void* parent, void** out);
+int endpoint_ui_image_set_source(void* image, const uint8_t* rgb565Pixels,
+                                 int byteCount, int width, int height);
+
+// TextBox: single-line text input. ValueChanged event via
+// endpoint_ui_subscribe_value_changed.
+int endpoint_ui_textbox_create(void* parent, void** out);
+int endpoint_ui_textbox_set_text(void* textbox, const char* text);
+int endpoint_ui_textbox_get_text(void* textbox, char* outBuf, int outSize);
+int endpoint_ui_textbox_set_placeholder(void* textbox, const char* placeholder);
+
+// Slider.
+int endpoint_ui_slider_create(void* parent, void** out);
+int endpoint_ui_slider_set_range(void* slider, int min, int max);
+int endpoint_ui_slider_set_value(void* slider, int value);
+int endpoint_ui_slider_get_value(void* slider, int* value);
+
+// CheckBox.
+int endpoint_ui_checkbox_create(void* parent, void** out);
+int endpoint_ui_checkbox_set_text(void* checkbox, const char* text);
+int endpoint_ui_checkbox_set_checked(void* checkbox, int checked);
+int endpoint_ui_checkbox_get_checked(void* checkbox, int* checked);
+
+// Keyboard. Pass a TextBox handle to set_textbox so the keyboard's keys
+// write into it; pass null to detach.
+int endpoint_ui_keyboard_create(void* parent, void** out);
+int endpoint_ui_keyboard_set_textbox(void* keyboard, void* textbox);
+
+// Switch — binary on/off toggle. ValueChanged event fires via the shared
+// endpoint_ui_subscribe_value_changed.
+int endpoint_ui_switch_create(void* parent, void** out);
+int endpoint_ui_switch_set_checked(void* sw, int checked);
+int endpoint_ui_switch_get_checked(void* sw, int* checked);
+
+// ProgressBar — horizontal bar. No events; the user drives it.
+int endpoint_ui_progressbar_create(void* parent, void** out);
+int endpoint_ui_progressbar_set_range(void* bar, int min, int max);
+int endpoint_ui_progressbar_set_value(void* bar, int value);
+int endpoint_ui_progressbar_get_value(void* bar, int* value);
+
+// Dropdown — select one item from a list. Options passed as a newline-
+// separated string ("Apple\nBanana\nCherry"). ValueChanged event fires
+// via the shared endpoint_ui_subscribe_value_changed.
+int endpoint_ui_dropdown_create(void* parent, void** out);
+int endpoint_ui_dropdown_set_options(void* dd, const char* nlSeparated);
+int endpoint_ui_dropdown_set_selected(void* dd, int index);
+int endpoint_ui_dropdown_get_selected(void* dd, int* index);
+
+// RadioButton — circular-indicator CheckBox. Grouping (mutual exclusion)
+// is up to the caller. ValueChanged event via shared subscribe.
+int endpoint_ui_radiobutton_create(void* parent, void** out);
+int endpoint_ui_radiobutton_set_text(void* rb, const char* text);
+int endpoint_ui_radiobutton_set_checked(void* rb, int checked);
+int endpoint_ui_radiobutton_get_checked(void* rb, int* checked);
+
+// MessageBox — modal dialog. Add buttons; wire Clicked on each handle via
+// endpoint_ui_subscribe_clicked. Hide dismisses the dialog.
+int endpoint_ui_messagebox_create(void* parent, void** out);
+int endpoint_ui_messagebox_set_title(void* mb, const char* title);
+int endpoint_ui_messagebox_set_body(void* mb, const char* body);
+int endpoint_ui_messagebox_add_button(void* mb, const char* text, void** outButton);
+int endpoint_ui_messagebox_hide(void* mb);
+
+// ListBox — vertical scrollable list. Add items; wire Clicked on each item
+// handle via endpoint_ui_subscribe_clicked. Clear drops all items.
+int endpoint_ui_listbox_create(void* parent, void** out);
+int endpoint_ui_listbox_add_item(void* lb, const char* text, void** outItem);
+int endpoint_ui_listbox_clear(void* lb);
+
+// ---- Graphics (stb_image + stb_truetype) ----
+// Decode a JPG/PNG/BMP/GIF/TGA file into a malloc'd RGB888 buffer. The caller
+// frees the buffer with endpoint_image_free. endpoint_font_init copies the
+// TTF bytes into a heap-owned handle, so the caller's buffer can be released
+// as soon as init returns. endpoint_font_rasterize's bitmap frees with
+// endpoint_image_free (same free() underneath).
+int  endpoint_image_decode(const uint8_t* data, int length,
+                           uint8_t** pixels, int* width, int* height);
+void endpoint_image_free(uint8_t* pixels);
+int  endpoint_font_init(const uint8_t* ttfData, int length, void** out_handle);
+void endpoint_font_free(void* handle);
+int  endpoint_font_metrics(void* handle, int sizePx,
+                           int* ascent, int* descent, int* lineGap);
+int  endpoint_font_rasterize(void* handle, int codepoint, int sizePx,
+                             uint8_t** bitmap, int* width, int* height,
+                             int* xoff, int* yoff, int* advance);
+
+// ---- UI widget font (LVGL lv_tiny_ttf) ----
+// Separate handle namespace from the Canvas-side font above (stb_truetype).
+// widget_set_font attaches a loaded font to any widget's text (Button
+// caption, Label text, Chart labels, ...).
+int  endpoint_ui_font_load_ttf(const uint8_t* data, int length, int sizePx, void** out_handle);
+void endpoint_ui_font_free(void* handle);
+int  endpoint_ui_widget_set_font(void* widget, void* font_handle);
+
+// ---- UI custom display ----
+// LVGL renders each frame into its internal buffer and invokes flush_cb with
+// a pointer to those bytes; the callback pushes them to any destination
+// (SPI/I2C/UART/HDMI/file/network). pixel_format matches Drawing::PixelFormat.
+int endpoint_ui_initialize_custom(int width, int height, int pixel_format,
+                                  void (*flush_cb)(void* context, const uint8_t* pixels, int byteCount),
+                                  void* context);
+
+#ifdef __cplusplus
+}
+#endif

@@ -1,0 +1,4 @@
+{
+    // IntelliSense and the debugger (gdb)
+    "recommendations": ["ms-vscode.cpptools", "ghielectronics.endpoint"]
+}

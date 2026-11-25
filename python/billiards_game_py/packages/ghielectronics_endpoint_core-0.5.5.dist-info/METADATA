@@ -1,0 +1,19 @@
+Metadata-Version: 2.4
+Name: GHIElectronics.Endpoint.Core
+Version: 0.5.5
+Summary: The Endpoint's pins, buses and ports, and the libendpoint library, for GHI Electronics Endpoint (the same API as .NET's GHIElectronics.Endpoint.Core).
+Author-email: "GHI Electronics, LLC" <support@ghielectronics.com>
+License-Expression: MIT
+Project-URL: Homepage, https://www.ghielectronics.com/
+Project-URL: Repository, https://github.com/ghi-electronics/Endpoint-Libraries
+Project-URL: Issues, https://github.com/ghi-electronics/Endpoint-Libraries/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: POSIX :: Linux
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+
+# GHIElectronics.Endpoint.Core
+
+The Endpoint's pins, buses and ports, and the libendpoint library, for GHI Electronics Endpoint (the same API as .NET's GHIElectronics.Endpoint.Core).
+
+Part of the [GHI Electronics Endpoint](https://github.com/ghi-electronics/Endpoint-Libraries) libraries. See the repository README for the full package list and getting-started guide.

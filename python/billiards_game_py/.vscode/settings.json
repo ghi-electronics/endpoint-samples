@@ -1,0 +1,11 @@
+{
+    // The file that starts the program
+    "endpoint.main": "main.py",
+
+    // IntelliSense also looks in "packages", where "pip install" puts packages for the board
+    "python.analysis.extraPaths": ["packages"],
+
+    // "pip" in this project's terminal installs for the board (the GHI Endpoint
+    // extension's pip): no PC virtual environment in front of it
+    "python.terminal.activateEnvironment": false
+}

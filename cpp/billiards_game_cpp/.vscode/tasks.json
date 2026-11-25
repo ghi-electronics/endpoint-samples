@@ -1,0 +1,105 @@
+﻿{
+    // Endpoint tasks. The program is compiled on this PC ("endpoint-cli c++": Zig's
+    // clang for the board, downloaded once) from every .cpp file of the project
+    // ("**/*.cpp"), with libendpoint (the "endpoint" folder: endpoint.h and
+    // libendpoint.a), and runs on the board over USB. Add data files next to
+    // the binary with `endpoint-cli deploy --add <folder>` when you need them.
+    // Terminal > Run Task... lists them:
+    //   endpoint: run                run on the board (no debugger) and show the output
+    //   endpoint: run at boot        run on the board now and at every boot
+    //   endpoint: stop               stop the program on the board
+    //   endpoint: stop run at boot   start nothing at boot
+    // F5 uses "endpoint: deploy for debugging" (see launch.json).
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "endpoint: stop",
+            "detail": "Stop the program running on the board",
+            "type": "endpoint",
+            "args": ["stop", "app"],
+            "problemMatcher": []
+        },
+
+        // F5: debug build (no optimization, debug info). The debug info says
+        // the sources are in /src; launch.json maps /src to this folder.
+        {
+            "label": "endpoint: build debug",
+            "type": "endpoint",
+            "args": ["c++", "-std=c++20", "-g", "-O0", "-fdebug-compilation-dir=/src",
+                     "-Iendpoint/include", "**/*.cpp", "endpoint/lib/arm64/libendpoint.a",
+                     "-Wl,--as-needed", "endpoint/lib/arm64/libusb-1.0.so", "endpoint/lib/arm64/libhidapi-libusb.so",
+                     "-o", "bin/debug/${workspaceFolderBasename}"],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": "$gcc",
+            "group": "build"
+        },
+        {
+            "label": "endpoint: deploy for debugging",
+            "type": "endpoint",
+            "args": ["deploy", "--add", "${workspaceFolder}/Resources",
+                     "${workspaceFolder}/bin/debug", "/data/debug/${workspaceFolderBasename}"],
+            "dependsOrder": "sequence",
+            "dependsOn": ["endpoint: stop", "endpoint: build debug"],
+            "problemMatcher": []
+        },
+
+        // Release build: optimized, no debug info
+        {
+            "label": "endpoint: build release",
+            "type": "endpoint",
+            "args": ["c++", "-std=c++20", "-O2", "-s",
+                     "-Iendpoint/include", "**/*.cpp", "endpoint/lib/arm64/libendpoint.a",
+                     "-Wl,--as-needed", "endpoint/lib/arm64/libusb-1.0.so", "endpoint/lib/arm64/libhidapi-libusb.so",
+                     "-o", "bin/release/${workspaceFolderBasename}"],
+            "options": { "cwd": "${workspaceFolder}" },
+            "problemMatcher": "$gcc",
+            "group": { "kind": "build", "isDefault": true }
+        },
+        {
+            "label": "endpoint: deploy",
+            "type": "endpoint",
+            "args": ["deploy", "--add", "${workspaceFolder}/Resources",
+                     "${workspaceFolder}/bin/release", "/data/apps/${workspaceFolderBasename}"],
+            "dependsOrder": "sequence",
+            "dependsOn": ["endpoint: stop", "endpoint: build release"],
+            "problemMatcher": []
+        },
+        {
+            "label": "endpoint: run",
+            "detail": "Run on the board without the debugger and show the output (Ctrl+C stops it)",
+            "type": "endpoint",
+            "args": ["run", "--tag", "app", "--cwd", "/data/apps/${workspaceFolderBasename}",
+                     "/data/apps/${workspaceFolderBasename}/${workspaceFolderBasename}"],
+            "dependsOn": "endpoint: deploy",
+            "problemMatcher": []
+        },
+        {
+            "label": "endpoint: set run at boot",
+            "type": "endpoint",
+            "args": ["autostart", "--cwd", "/data/apps/${workspaceFolderBasename}",
+                     "/data/apps/${workspaceFolderBasename}/${workspaceFolderBasename}"],
+            "problemMatcher": []
+        },
+        {
+            "label": "endpoint: start in background",
+            "type": "endpoint",
+            "args": ["run", "--detach", "--tag", "app", "--cwd", "/data/apps/${workspaceFolderBasename}",
+                     "/data/apps/${workspaceFolderBasename}/${workspaceFolderBasename}"],
+            "problemMatcher": []
+        },
+        {
+            "label": "endpoint: run at boot",
+            "detail": "Run on the board now and at every boot",
+            "dependsOrder": "sequence",
+            "dependsOn": ["endpoint: deploy", "endpoint: set run at boot", "endpoint: start in background"],
+            "problemMatcher": []
+        },
+        {
+            "label": "endpoint: stop run at boot",
+            "detail": "Start nothing at boot",
+            "type": "endpoint",
+            "args": ["autostart", "--off"],
+            "problemMatcher": []
+        }
+    ]
+}

@@ -1,0 +1,48 @@
+﻿{
+    // IntelliSense with the headers the board's programs are built with
+    // (Zig's Linux and C++ headers, installed by the first "endpoint-cli c++"),
+    // and the settings Zig gives them (the _LIBCPP_ ones: without them
+    // IntelliSense does not see std::thread, std::this_thread, ...)
+    "configurations": [
+        {
+            "name": "Endpoint",
+            "compilerPath": "",
+            "intelliSenseMode": "linux-clang-arm64",
+            "cStandard": "c17",
+            "cppStandard": "c++20",
+            "defines": [
+                "__linux__", "__unix__", "__ARM_ARCH=8", "__GLIBC_MINOR__=34",
+                "_LIBCPP_ABI_NAMESPACE=__1",
+                "_LIBCPP_ABI_VERSION=1",
+                "_LIBCPP_ASSERTION_SEMANTIC_DEFAULT=_LIBCPP_ASSERTION_SEMANTIC_IGNORE",
+                "_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS",
+                "_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_NONE",
+                "_LIBCPP_HAS_FILESYSTEM=1",
+                "_LIBCPP_HAS_LOCALIZATION=1",
+                "_LIBCPP_HAS_MONOTONIC_CLOCK=1",
+                "_LIBCPP_HAS_MUSL_LIBC=0",
+                "_LIBCPP_HAS_NO_STD_MODULES",
+                "_LIBCPP_HAS_RANDOM_DEVICE=1",
+                "_LIBCPP_HAS_TERMINAL=1",
+                "_LIBCPP_HAS_THREADS=1",
+                "_LIBCPP_HAS_TIME_ZONE_DATABASE=1",
+                "_LIBCPP_HAS_UNICODE=1",
+                "_LIBCPP_HAS_VENDOR_AVAILABILITY_ANNOTATIONS=0",
+                "_LIBCPP_HAS_WIDE_CHARACTERS=1",
+                "_LIBCPP_PSTL_BACKEND_SERIAL",
+                "_LIBCXXABI_DISABLE_VISIBILITY_ANNOTATIONS"
+            ],
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${env:LOCALAPPDATA}/Endpoint/tools/zig-x86_64-windows-0.17.0/lib/libcxx/include",
+                "${env:LOCALAPPDATA}/Endpoint/tools/zig-x86_64-windows-0.17.0/lib/libcxxabi/include",
+                "${env:LOCALAPPDATA}/Endpoint/tools/zig-x86_64-windows-0.17.0/lib/include",
+                "${env:LOCALAPPDATA}/Endpoint/tools/zig-x86_64-windows-0.17.0/lib/libc/include/aarch64-linux-gnu",
+                "${env:LOCALAPPDATA}/Endpoint/tools/zig-x86_64-windows-0.17.0/lib/libc/include/generic-glibc",
+                "${env:LOCALAPPDATA}/Endpoint/tools/zig-x86_64-windows-0.17.0/lib/libc/include/aarch64-linux-any",
+                "${env:LOCALAPPDATA}/Endpoint/tools/zig-x86_64-windows-0.17.0/lib/libc/include/any-linux-any"
+            ]
+        }
+    ],
+    "version": 4
+}

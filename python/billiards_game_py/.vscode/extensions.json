@@ -1,0 +1,4 @@
+{
+    // F5 needs the Python Debugger extension
+    "recommendations": ["ms-python.python", "ms-python.debugpy", "ghielectronics.endpoint"]
+}

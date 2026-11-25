@@ -1,0 +1,22 @@
+Metadata-Version: 2.4
+Name: GHIElectronics.Endpoint.UI
+Version: 0.5.5
+Summary: UI widgets for Endpoint: Button, Label, Container, Image, TextBox, Slider, CheckBox on top of the embedded LVGL in libendpoint. Pair with the GHI Electronics UI designer.
+Author-email: "GHI Electronics, LLC" <support@ghielectronics.com>
+License-Expression: MIT
+Project-URL: Homepage, https://www.ghielectronics.com/
+Project-URL: Repository, https://github.com/ghi-electronics/Endpoint-Libraries
+Project-URL: Issues, https://github.com/ghi-electronics/Endpoint-Libraries/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: POSIX :: Linux
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: GHIElectronics.Endpoint.Core<0.6,>=0.5.5
+Requires-Dist: GHIElectronics.Endpoint.Devices.Display<0.6,>=0.5.5
+Requires-Dist: GHIElectronics.Endpoint.Drawing<0.6,>=0.5.5
+
+# GHIElectronics.Endpoint.UI
+
+UI widgets for Endpoint: Button, Label, Container, Image, TextBox, Slider, CheckBox on top of the embedded LVGL in libendpoint. Pair with the GHI Electronics UI designer.
+
+Part of the [GHI Electronics Endpoint](https://github.com/ghi-electronics/Endpoint-Libraries) libraries. See the repository README for the full package list and getting-started guide.

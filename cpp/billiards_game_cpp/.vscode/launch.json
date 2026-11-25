@@ -1,0 +1,30 @@
+﻿{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // Debugs the program on the board over USB: "endpoint-cli pipe" runs
+            // gdb there and connects it to VS Code
+            "name": "Debug on Endpoint",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/data/debug/${workspaceFolderBasename}/${workspaceFolderBasename}",
+            "cwd": "/data/debug/${workspaceFolderBasename}",
+            "args": [],
+            "stopAtEntry": false,
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "targetArchitecture": "arm64",
+            "pipeTransport": {
+                "pipeCwd": "${workspaceFolder}",
+                "pipeProgram": "${command:endpoint.cliPath}",
+                "pipeArgs": ["pipe", "/bin/sh", "-c"],
+                "debuggerPath": "/usr/bin/gdb"
+            },
+            "sourceFileMap": { "/src": "${workspaceFolder}" },
+            "setupCommands": [
+                { "description": "Readable structs and arrays", "text": "-enable-pretty-printing", "ignoreFailures": true }
+            ],
+            "preLaunchTask": "endpoint: deploy for debugging"
+        }
+    ]
+}

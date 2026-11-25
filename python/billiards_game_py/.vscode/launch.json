@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // Debugs the program on the board over USB: debugpy runs there, and
+            // endpoint-cli forwards its port (5678) to this PC
+            "name": "Debug on Endpoint",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": { "host": "127.0.0.1", "port": 5678 },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/data/debug/${workspaceFolderBasename}"
+                }
+            ],
+            "justMyCode": true,
+            "preLaunchTask": "endpoint: start debugging",
+            "postDebugTask": "endpoint: stop"
+        }
+    ]
+}
